@@ -9,6 +9,6 @@ You've been asked to refactor the function `deterministicPartitionKey` in [`dpk.
 You will be graded on the exhaustiveness and quality of your unit tests, the depth of your refactor, and the level of insight into your thought process provided by the written explanation.
 
 ## Your Explanation Here
-We take out commonly used function and create a function of its own that can be called so we can test for it. We have the `generateHash` function
-We exit early by checking for the option that will make us exit eearly, then we have `if(!event) return TRIVIAL_PARTITION_KEY;`
-We keep on checking for falsy values so we are able to handle the use case and continue processing or exit the function. We have a more testable and readable code.
+We take out a commonly used function and create a function of its own that can be called so we can test for it. We have the `generateHash` function
+We exit early by checking for the option that will make us exit early, then we have `if(!event) return TRIVIAL_PARTITION_KEY;`
+We keep on checking for falsy values so we can handle the use case and continue processing or exit the function. We have a more testable and readable code.
