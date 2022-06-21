@@ -1,28 +1,29 @@
 const crypto = require("crypto");
 
+exports.generateHash = (data) => {
+  return crypto.createHash("sha3-512").update(data).digest("hex");
+}
+
 exports.deterministicPartitionKey = (event) => {
   const TRIVIAL_PARTITION_KEY = "0";
   const MAX_PARTITION_KEY_LENGTH = 256;
-  let candidate;
+  ///if there is no data in event, then TRIVIAL_PARTITION_KEY
+  if(!event) return TRIVIAL_PARTITION_KEY;
 
-  if (event) {
-    if (event.partitionKey) {
-      candidate = event.partitionKey;
-    } else {
-      const data = JSON.stringify(event);
-      candidate = crypto.createHash("sha3-512").update(data).digest("hex");
-    }
+  let candidate = event.partitionKey
+
+  //if candidate is empty, stringify the whole event payload and generate a hash
+  if(!candidate){
+    const data = JSON.stringify(event);
+    candidate = this.generateHash(data);
   }
 
-  if (candidate) {
-    if (typeof candidate !== "string") {
-      candidate = JSON.stringify(candidate);
-    }
-  } else {
-    candidate = TRIVIAL_PARTITION_KEY;
+  if (typeof candidate !== "string") {
+    candidate = JSON.stringify(candidate);
   }
-  if (candidate.length > MAX_PARTITION_KEY_LENGTH) {
-    candidate = crypto.createHash("sha3-512").update(candidate).digest("hex");
-  }
-  return candidate;
+
+  if (candidate.length <= MAX_PARTITION_KEY_LENGTH) return candidate;
+
+  return this.generateHash(candidate);
 };
+
